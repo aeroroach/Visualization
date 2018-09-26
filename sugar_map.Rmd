@@ -1,0 +1,41 @@
+---
+title: "Sugarcane Map"
+author: "Pitchayen S."
+date: "9/26/2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r library}
+library(tidyverse)
+library(sf)
+```
+
+```{r data}
+th <- st_read("thai/THA_Adm1_GISTA_plyg_v5.shp")
+glimpse(th)
+```
+
+```{r tmap}
+library(tmap)
+```
+
+Excluding southern provices
+```{r exclude}
+ex_south <- as.character(th$Adm1Name[c(-8,-19,-20,-30,-27,-37,-40,-41,-44,-48,-50,-58,-59,-68)])
+```
+
+```{r plot}
+th %>% 
+  filter(Adm1Name %in% ex_south) %>% 
+  tm_shape() + tm_polygons()
+```
+
+```{r write}
+tbl <- data.frame(id = 1:77, provice = th$Adm1Name)
+write_csv(tbl, "template.csv")
+```
+
