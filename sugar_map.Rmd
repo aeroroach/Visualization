@@ -23,19 +23,35 @@ glimpse(th)
 library(tmap)
 ```
 
+```{r joining}
+sugar <- read_csv("sugarcane.csv")
+th %>% 
+  left_join(sugar, by = c("Adm1Name"="province")) %>% 
+  mutate(sugarcane = ifelse(sugarcane == 0, NA, round(sugarcane/1000000, digits = 2))) -> th_sugar
+```
+
 Excluding southern provices
 ```{r exclude}
 ex_south <- as.character(th$Adm1Name[c(-8,-19,-20,-30,-27,-37,-40,-41,-44,-48,-50,-58,-59,-68)])
 ```
 
 ```{r plot}
-th %>% 
+th_sugar %>% 
   filter(Adm1Name %in% ex_south) %>% 
-  tm_shape() + tm_polygons()
+  tm_shape() + tm_polygons(col = "sugarcane", title = "Production (M Sacks)",
+                           lwd = 0.5, 
+                           textNA = "None",
+                           colorNA = "grey94",
+                           border.col = "white", palette = "Blues") +
+  tm_text("Adm1Name", size = "AREA", col = "grey") +
+  tm_layout(frame = F,
+            outer.margins = 0,
+            legend.title.size = 1,
+            legend.text.size = 0.8,
+            legend.position = c("LEFT", "BOTTOM"))
 ```
 
 ```{r write}
 tbl <- data.frame(id = 1:77, provice = th$Adm1Name)
 write_csv(tbl, "template.csv")
 ```
-
