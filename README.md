@@ -1,1 +1,1 @@
-# spatial
+# Visualization for chart or spatial
