@@ -1,0 +1,52 @@
+---
+title: "Sugarcane Map"
+author: "Pitchayen S."
+date: "9/26/2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r library}
+library(tidyverse)
+library(sf)
+```
+
+```{r data}
+th <- st_read("thai/THA_Adm1_GISTA_plyg_v5.shp")
+glimpse(th)
+```
+
+```{r tmap}
+library(tmap)
+```
+
+```{r joining}
+gs <- read_csv("GS sales by province.csv")
+th %>% 
+  left_join(gs, by = c("Adm1Name"="province")) -> th_sugar
+```
+
+```{r plot}
+th_sugar %>% 
+  filter(region == "BKK & Greater") %>% 
+  tm_shape() + tm_polygons(col = "prop", title = "% of GS batt vs Car regis.",
+                           lwd = 0.5, 
+                           textNA = "None",
+                           colorNA = "grey94",
+                           border.col = "white", palette = "Blues") +
+  tm_text("Adm1Name", size = "AREA", col = "grey") +
+  tm_layout(frame = F,
+            outer.margins = 0,
+            legend.title.size = 1,
+            legend.text.size = 0.8,
+            legend.position = c("LEFT", "BOTTOM"))
+```
+
+```{r write}
+tbl <- data.frame(id = 1:77, provice = th$Adm1Name)
+write_csv(tbl, "template.csv")
+```
+
