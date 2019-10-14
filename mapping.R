@@ -1,6 +1,8 @@
-mapping <- function(region_area) {
-  png(file = paste0(region_area,".png"), bg = "transparent", width = 800, height = 500)
-  th_sugar %>% 
+mapping_region <- function(dt_file, region_area, prefix) {
+  png(file = paste0(prefix, "_", region_area,".png"), bg = "transparent", 
+      width = 800, height = 500)
+  
+  dt_file %>% 
     mutate(prop = round(prop*100, digits = 0), 
            province = paste0(Adm1Name, ", (", prop, "%)")) %>% 
     filter(region == region_area) %>% 
